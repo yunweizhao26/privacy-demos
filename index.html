@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Demos — PolicyClaw · Privacy as Code · PoliScope</title>
+<meta name="description" content="Three research demos that turn privacy policies into something a computer can check: contradiction analysis, promise enforcement over time, and code auditing.">
+<style>/* ============================================================
+   Privacy Demos — shared theme
+   PolicyClaw · Privacy as Code · PoliScope
+   ============================================================ */
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f6;
+  --text: #0f172a;
+  --dim: #5b6472;
+  --faint: #8a93a3;
+  --line: #e3e7ee;
+  --line-strong: #c9d0dc;
+  --accent: #4f46e5;
+  --accent-ink: #4338ca;
+  --accent-soft: #eef0fe;
+  --good: #15803d;
+  --good-bg: #eaf7ee;
+  --bad: #b91c1c;
+  --bad-bg: #fdeceb;
+  --warn: #92400e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px -18px rgba(15, 23, 42, .25);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- layout shell ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 12px 28px;
+  background: rgba(255, 255, 255, .9);
+  backdrop-filter: saturate(160%) blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 15px;
+  box-shadow: var(--shadow);
+}
+.brand .author { font-weight: 500; color: var(--dim); font-size: .86rem; }
+.site-nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.site-nav a {
+  padding: 6px 13px;
+  border-radius: 999px;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.site-nav a:hover { color: var(--text); background: var(--surface-2); }
+.site-nav a.active { color: var(--accent-ink); background: var(--accent-soft); border-color: #dcdbfc; }
+
+main, .page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+}
+
+/* ---------- hero / landing ---------- */
+.hero { max-width: 860px; margin: 8px 0 10px; }
+.hero .eyebrow {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  font-weight: 800;
+}
+.hero .sub {
+  margin: 16px 0 0;
+  font-size: 1.16rem;
+  color: var(--dim);
+  max-width: 46em;
+}
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 30px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: 0 14px 34px -20px rgba(15, 23, 42, .35); }
+.card .icon { font-size: 1.7rem; line-height: 1; }
+.card h2 { margin: 0; font-size: 1.22rem; letter-spacing: -.01em; }
+.card .q { font-size: .94rem; color: var(--dim); margin: 0; }
+.card .cta { margin-top: auto; color: var(--accent-ink); font-weight: 600; font-size: .94rem; }
+.card .cta::after { content: " →"; }
+
+.walkthrough { max-width: 52em; padding-left: 1.2em; color: #26303f; }
+.walkthrough li { margin: 10px 0; }
+.walkthrough code, .walkthrough em { font-style: normal; font-weight: 600; }
+
+/* ---------- headings / text ---------- */
+h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 4px; }
+h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margin: 30px 0 8px; }
+h3 { font-size: 1rem; font-weight: 600; margin: 20px 0 6px; }
+p { margin: 8px 0; }
+a { color: var(--accent-ink); }
+.lead { max-width: 52em; color: #26303f; }
+.dim { color: var(--dim); }
+.pick { margin: 16px 0 4px; }
+
+/* ---------- tables ---------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .92rem;
+  margin: 8px 0 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: #334155;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+}
+td { padding: 8px 14px; vertical-align: top; border-top: 1px solid var(--line); }
+tr:first-child td { border-top: 0; }
+tbody tr:hover td { background: #fafbfd; }
+th:last-child, td:last-child { padding-right: 14px; }
+
+tr.pickable { cursor: pointer; }
+tr.pickable:hover td { background: #f4f6fa; }
+tr.on td { background: #fdf6d8 !important; }
+.num { color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.good { color: var(--good); font-weight: 600; }
+.bad { color: var(--bad); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+td.slot { width: 8.5em; color: var(--dim); }
+.outcome { font-weight: 700; }
+.changed { font-weight: 700; }
+.keys { float: right; }
+
+/* ---------- controls ---------- */
+select, button, input { font: inherit; color: inherit; }
+select, input[type="text"], input:not([type]) {
+  max-width: 100%;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+select:focus, input:focus, textarea:focus { outline: 2px solid #c7c9f8; outline-offset: 1px; border-color: var(--accent); }
+textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--surface);
+  resize: vertical;
+}
+textarea[readonly] { background: var(--surface-2); }
+button {
+  padding: 6px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
+
+/* ---------- code / formulas ---------- */
+code, .src, textarea { font-family: var(--mono); font-size: .83rem; }
+pre.src {
+  white-space: pre-wrap;
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+}
+.policytext {
+  white-space: pre-wrap;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: .95rem;
+  background: var(--surface);
+}
+.diff { white-space: pre; overflow-x: auto; }
+.diff .add { background: var(--good-bg); display: block; }
+.diff .del { background: var(--bad-bg); display: block; }
+
+/* ---------- highlight marks ---------- */
+mark { color: inherit; padding: 0 2px; border-radius: 3px; }
+mark.h0 { background: #fde68a; }
+mark.h1 { background: #a7f3d0; }
+mark.h2 { background: #bae6fd; }
+mark.h3 { background: #fbcfe8; }
+mark.h4 { background: #fed7aa; }
+mark.u1 { background: none; border-bottom: 2px solid var(--accent); }
+mark.u2 { background: none; border-bottom: 1px dotted var(--accent); }
+
+/* ---------- details ---------- */
+details { margin: 12px 0; }
+details > summary { cursor: pointer; font-weight: 600; color: #334155; }
+details > summary:hover { color: var(--accent-ink); }
+summary.h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margin: 30px 0 8px; }
+
+/* ---------- Privacy as Code specifics ---------- */
+#policy { height: 420px; }
+#glossary { height: 300px; margin-top: 6px; }
+#steps { height: 230px; }
+#status { margin-left: 10px; }
+#run tr[data-n] { cursor: pointer; }
+#run tr[data-n]:hover td { background: #f4f6fa; }
+#run tr.on td { background: #fdf6d8 !important; }
+.words p { margin: 4px 0; font-size: .92rem; }
+.pairs td[rowspan], .pairs tr > td:first-child:not(.code) { width: 32%; }
+.pairs td.code { width: 34%; cursor: pointer; border-left: 3px solid transparent; padding-left: 8px; }
+.pairs td.code.sel { border-left-color: var(--accent); }
+.pairs tr.cont td { border-top: 1px dotted var(--line); }
+.pairs .plain { margin: 0 0 4px; }
+.forms td:first-child { width: 15em; }
+.error { white-space: pre-wrap; color: var(--bad); }
+.sent { cursor: pointer; padding-left: 6px; border-left: 3px solid transparent; }
+.sent.sel { border-left-color: var(--accent); }
+.plain { font-size: .92rem; color: #334155; margin: 2px 0 4px; }
+
+/* ---------- PolicyClaw specifics (shared, kept for safety) ---------- */
+.cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 40px; align-items: start; margin-top: 18px; }
+@media (max-width: 920px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 56px;
+  padding: 22px 24px 40px;
+  color: var(--dim);
+  font-size: .86rem;
+  background: var(--surface);
+}
+.site-footer .inner { max-width: 1180px; margin: 0 auto; }
+.site-footer a { color: var(--accent-ink); }
+.site-footer .foot-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 6px 0; }
+
+[hidden] { display: none !important; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0 0; }
+@media (max-width: 640px) { table { display: block; overflow-x: auto; } .nowrap { white-space: normal; } }
+</style>
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">◈</span>Privacy Demos<span class="author"> · Yunwei Zhao, NYU</span></a><nav class="site-nav"><a href="index.html" class="active">All demos</a><a href="policyclaw.html">PolicyClaw</a><a href="privacy-as-code.html">Privacy as Code</a><a href="poliscope.html">PoliScope</a></nav></header><main class="page">
+
+<div class="hero">
+  <p class="eyebrow">Research demos · Yunwei Zhao, NYU</p>
+  <h1>Privacy, turned into something a computer can check</h1>
+  <p class="sub">Three tools that read a privacy policy the way a machine can: as rules with a precise meaning, whose promises can be tested and whose code can be audited.</p>
+</div>
+
+<div class="grid">
+  <a class="card" href="policyclaw.html">
+    <div class="icon">⚖️</div>
+    <h2>PolicyClaw</h2>
+    <p class="q">Does a privacy policy contradict itself? Compiles legal text into first-order rules and uses an SMT solver to find overlapping permissions and prohibitions.</p>
+    <span class="cta">Open demo</span>
+  </a>
+  <a class="card" href="privacy-as-code.html">
+    <div class="icon">📜</div>
+    <h2>Privacy as Code</h2>
+    <p class="q">Does a service keep its promises over time? Turns policy promises into clauses, then walks a story step by step to check every action and duty.</p>
+    <span class="cta">Open demo</span>
+  </a>
+  <a class="card" href="poliscope.html">
+    <div class="icon">🔍</div>
+    <h2>PoliScope</h2>
+    <p class="q">Does the code keep the promises? Checks whether a code base actually upholds a policy statement, and points to the violating code.</p>
+    <span class="cta">Open demo</span>
+  </a>
+</div>
+
+<h2>A five-minute walkthrough</h2>
+<p class="lead">Each page is self-contained. In order, the fastest tour is:</p>
+<ol class="walkthrough">
+  <li><strong>PolicyClaw</strong> — pick the <em>contradiction</em> example and step through the six stages, from text to an SMT verdict.</li>
+  <li><strong>Privacy as Code</strong> — pick <em>Spotify</em> from the published policies and click <em>Run</em> to watch each step get allowed or refused.</li>
+  <li><strong>PoliScope</strong> — see the policy statement, the violating code, and the one-line fix that was merged upstream.</li>
+</ol>
+
+</main><footer class="site-footer"><div class="inner"><div class="foot-nav"><a href="index.html">All demos</a> · <a href="policyclaw.html">PolicyClaw</a> · <a href="privacy-as-code.html">Privacy as Code</a> · <a href="poliscope.html">PoliScope</a></div><p>Yunwei Zhao · New York University — PolicyClaw · Privacy as Code · PoliScope. This saved copy shows precomputed results; to edit the inputs and re-run the engines, run <code>python3 server.py</code> locally.</p></div></footer></body>
+</html>

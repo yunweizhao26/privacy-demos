@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PolicyClaw demo</title>
+<style>/* ============================================================
+   Privacy Demos — shared theme
+   PolicyClaw · Privacy as Code · PoliScope
+   ============================================================ */
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f6;
+  --text: #0f172a;
+  --dim: #5b6472;
+  --faint: #8a93a3;
+  --line: #e3e7ee;
+  --line-strong: #c9d0dc;
+  --accent: #4f46e5;
+  --accent-ink: #4338ca;
+  --accent-soft: #eef0fe;
+  --good: #15803d;
+  --good-bg: #eaf7ee;
+  --bad: #b91c1c;
+  --bad-bg: #fdeceb;
+  --warn: #92400e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px -18px rgba(15, 23, 42, .25);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- layout shell ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 12px 28px;
+  background: rgba(255, 255, 255, .9);
+  backdrop-filter: saturate(160%) blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 15px;
+  box-shadow: var(--shadow);
+}
+.brand .author { font-weight: 500; color: var(--dim); font-size: .86rem; }
+.site-nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.site-nav a {
+  padding: 6px 13px;
+  border-radius: 999px;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.site-nav a:hover { color: var(--text); background: var(--surface-2); }
+.site-nav a.active { color: var(--accent-ink); background: var(--accent-soft); border-color: #dcdbfc; }
+
+main, .page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+}
+
+/* ---------- hero / landing ---------- */
+.hero { max-width: 860px; margin: 8px 0 10px; }
+.hero .eyebrow {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  font-weight: 800;
+}
+.hero .sub {
+  margin: 16px 0 0;
+  font-size: 1.16rem;
+  color: var(--dim);
+  max-width: 46em;
+}
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 30px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: 0 14px 34px -20px rgba(15, 23, 42, .35); }
+.card .icon { font-size: 1.7rem; line-height: 1; }
+.card h2 { margin: 0; font-size: 1.22rem; letter-spacing: -.01em; }
+.card .q { font-size: .94rem; color: var(--dim); margin: 0; }
+.card .cta { margin-top: auto; color: var(--accent-ink); font-weight: 600; font-size: .94rem; }
+.card .cta::after { content: " →"; }
+
+.walkthrough { max-width: 52em; padding-left: 1.2em; color: #26303f; }
+.walkthrough li { margin: 10px 0; }
+.walkthrough code, .walkthrough em { font-style: normal; font-weight: 600; }
+
+/* ---------- headings / text ---------- */
+h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 4px; }
+h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margin: 30px 0 8px; }
+h3 { font-size: 1rem; font-weight: 600; margin: 20px 0 6px; }
+p { margin: 8px 0; }
+a { color: var(--accent-ink); }
+.lead { max-width: 52em; color: #26303f; }
+.dim { color: var(--dim); }
+.pick { margin: 16px 0 4px; }
+
+/* ---------- tables ---------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .92rem;
+  margin: 8px 0 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: #334155;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+}
+td { padding: 8px 14px; vertical-align: top; border-top: 1px solid var(--line); }
+tr:first-child td { border-top: 0; }
+tbody tr:hover td { background: #fafbfd; }
+th:last-child, td:last-child { padding-right: 14px; }
+
+tr.pickable { cursor: pointer; }
+tr.pickable:hover td { background: #f4f6fa; }
+tr.on td { background: #fdf6d8 !important; }
+.num { color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.good { color: var(--good); font-weight: 600; }
+.bad { color: var(--bad); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+td.slot { width: 8.5em; color: var(--dim); }
+.outcome { font-weight: 700; }
+.changed { font-weight: 700; }
+.keys { float: right; }
+
+/* ---------- controls ---------- */
+select, button, input { font: inherit; color: inherit; }
+select, input[type="text"], input:not([type]) {
+  max-width: 100%;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+select:focus, input:focus, textarea:focus { outline: 2px solid #c7c9f8; outline-offset: 1px; border-color: var(--accent); }
+textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--surface);
+  resize: vertical;
+}
+textarea[readonly] { background: var(--surface-2); }
+button {
+  padding: 6px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
+
+/* ---------- code / formulas ---------- */
+code, .src, textarea { font-family: var(--mono); font-size: .83rem; }
+pre.src {
+  white-space: pre-wrap;
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+}
+.policytext {
+  white-space: pre-wrap;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: .95rem;
+  background: var(--surface);
+}
+.diff { white-space: pre; overflow-x: auto; }
+.diff .add { background: var(--good-bg); display: block; }
+.diff .del { background: var(--bad-bg); display: block; }
+
+/* ---------- highlight marks ---------- */
+mark { color: inherit; padding: 0 2px; border-radius: 3px; }
+mark.h0 { background: #fde68a; }
+mark.h1 { background: #a7f3d0; }
+mark.h2 { background: #bae6fd; }
+mark.h3 { background: #fbcfe8; }
+mark.h4 { background: #fed7aa; }
+mark.u1 { background: none; border-bottom: 2px solid var(--accent); }
+mark.u2 { background: none; border-bottom: 1px dotted var(--accent); }
+
+/* ---------- details ---------- */
+details { margin: 12px 0; }
+details > summary { cursor: pointer; font-weight: 600; color: #334155; }
+details > summary:hover { color: var(--accent-ink); }
+summary.h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margin: 30px 0 8px; }
+
+/* ---------- Privacy as Code specifics ---------- */
+#policy { height: 420px; }
+#glossary { height: 300px; margin-top: 6px; }
+#steps { height: 230px; }
+#status { margin-left: 10px; }
+#run tr[data-n] { cursor: pointer; }
+#run tr[data-n]:hover td { background: #f4f6fa; }
+#run tr.on td { background: #fdf6d8 !important; }
+.words p { margin: 4px 0; font-size: .92rem; }
+.pairs td[rowspan], .pairs tr > td:first-child:not(.code) { width: 32%; }
+.pairs td.code { width: 34%; cursor: pointer; border-left: 3px solid transparent; padding-left: 8px; }
+.pairs td.code.sel { border-left-color: var(--accent); }
+.pairs tr.cont td { border-top: 1px dotted var(--line); }
+.pairs .plain { margin: 0 0 4px; }
+.forms td:first-child { width: 15em; }
+.error { white-space: pre-wrap; color: var(--bad); }
+.sent { cursor: pointer; padding-left: 6px; border-left: 3px solid transparent; }
+.sent.sel { border-left-color: var(--accent); }
+.plain { font-size: .92rem; color: #334155; margin: 2px 0 4px; }
+
+/* ---------- PolicyClaw specifics (shared, kept for safety) ---------- */
+.cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 40px; align-items: start; margin-top: 18px; }
+@media (max-width: 920px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 56px;
+  padding: 22px 24px 40px;
+  color: var(--dim);
+  font-size: .86rem;
+  background: var(--surface);
+}
+.site-footer .inner { max-width: 1180px; margin: 0 auto; }
+.site-footer a { color: var(--accent-ink); }
+.site-footer .foot-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 6px 0; }
+
+[hidden] { display: none !important; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0 0; }
+@media (max-width: 640px) { table { display: block; overflow-x: auto; } .nowrap { white-space: normal; } }
+
+.cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 40px; align-items: start; margin-top: 18px; }
+@media (max-width: 920px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+#policy p { margin: 0 0 12px; }
+#policy h3 { margin-top: 0; }
+#steps { list-style: none; margin: 0 0 14px; padding: 0; border-top: 1.5px solid #111; border-bottom: 1.5px solid #111; }
+#steps li { padding: 4px 8px; cursor: pointer; border-top: 1px solid #e2e2e2; }
+#steps li:first-child { border-top: 0; }
+#steps li:hover { background: #f4f4f4; }
+#steps li.on { background: #fff3c4; font-weight: 600; }
+#steps .num { display: inline-block; width: 1.6em; }
+.keys { float: right; }
+td.slot { width: 8.5em; color: #555; }
+.outcome { font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">◈</span>Privacy Demos<span class="author"> · Yunwei Zhao, NYU</span></a><nav class="site-nav"><a href="index.html">All demos</a><a href="policyclaw.html" class="active">PolicyClaw</a><a href="privacy-as-code.html">Privacy as Code</a><a href="poliscope.html">PoliScope</a></nav></header><main class="page">
+
+<h1>PolicyClaw</h1>
+<p class="lead">From Legal Text to Logic: Compiling Privacy Policies into Verifiable Rules</p>
+
+<p class="pick"><label for="example">Example:</label> <select id="example"></select></p>
+
+<div class="cols">
+<div>
+  <h2>Policy</h2>
+  <p class="dim" id="legend"></p>
+  <div id="policy"></div>
+</div>
+<div>
+  <h2>Steps <span class="dim keys">← →</span></h2>
+  <ol id="steps"></ol>
+  <div id="output"></div>
+</div>
+</div>
+
+<script>
+window.PRELOAD = {"examples": [{"key": "exclusive", "policy": "android-142", "rules_in_policy": 224, "sections": [{"id": 9, "text": "4. We use third party payment service providers to process any payment you make to our Services. Depending on the method of payment, you may be requested to provide us with your payment and credit card details which we will then provide to the payment service provider in order to process your payment. We do not store your credit card information, unless you choose the option to save such information in order to make recurring payments easier without having to re-enter your details each time. In such cases, we only store your card holder name, the card expiry date, your card type and the last four digits of the card number. We do not store any credit card code verification values and merely forward such values and your credit card number in an encrypted manner for the purpose of processing your payment by our payment service provider.\nWe process the above information for adequate performance of our contract with you.\n3.2 For improving your experience on the Platform and developing new functionalities of the Platform"}], "allow": {"id": "android-142#s9.4.0", "section": 9, "polarity": "ALLOW", "quotes": [{"field": "polarity", "text": "only store"}, {"field": "actor", "text": "we"}, {"field": "action", "text": "store"}, {"field": "data", "text": "the card expiry date"}, {"field": "purpose", "text": "for adequate performance of our contract with you"}, {"field": "condition", "text": "In such cases"}], "verb": "store", "operation": "storage", "head": {"actor": "first party", "action": "store@storage", "data": "card expiry date", "recipient": "", "source": "", "purpose": "contract_performance"}, "terms": {"data": {"same_as": "", "narrower_than": ["credit card details"]}, "actor": {"same_as": "", "narrower_than": []}, "purpose": {"same_as": "contract performance", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "bool", "var": "opt_in.save_credit_card_information"}]}, "guard_text": "opt_in.save_credit_card_information", "translations": [{"kind": "condition", "quote": "In such cases", "formula": "opt_in.save_credit_card_information"}], "residuals": []}, "deny": {"id": "android-142#s9.2.0", "section": 9, "polarity": "DENY", "quotes": [{"field": "polarity", "text": "do not store"}, {"field": "actor", "text": "We"}, {"field": "action", "text": "store"}, {"field": "data", "text": "your credit card information"}, {"field": "exception", "text": "you choose the option to save such information in order to make recurring payments easier without having to re-enter your details each time"}], "verb": "store", "operation": "storage", "head": {"actor": "first party", "action": "store@storage", "data": "credit card details", "recipient": "", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": ["payment data"]}, "actor": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "not", "arg": {"op": "bool", "var": "opt_in.save_credit_card_information"}}]}, "guard_text": "¬opt_in.save_credit_card_information", "translations": [{"kind": "exception", "quote": "you choose the option to save such information in order to make recurring payments easier without having to re-enter your details each time", "formula": "¬opt_in.save_credit_card_information"}], "residuals": []}, "pair_formation": {"same_operation": true, "data_jaccard": 0.2, "data_contained": false, "formed_in_step_4": false}, "smt_query": "(declare-fun user.age () Int)\n(declare-fun opt_in.save_credit_card_information () Bool)\n(declare-fun opt_out.save_credit_card_information () Bool)\n(declare-fun consent.save_credit_card_information () Bool)\n(declare-fun retention.days () Int)\n(assert\n (>= user.age 0))\n(assert\n (let (($x8 (not opt_in.save_credit_card_information)))\n (let (($x12 (not opt_out.save_credit_card_information)))\n (or $x12 $x8))))\n(assert\n (let (($x8 (not opt_in.save_credit_card_information)))\n (or $x8 consent.save_credit_card_information)))\n(assert\n (>= retention.days 0))\n(assert\n (and opt_in.save_credit_card_information))\n(assert\n (let (($x8 (not opt_in.save_credit_card_information)))\n(and $x8)))\n(check-sat)", "outcome": "mutually_exclusive", "blocking_residuals": [], "relation": "exclusive guards", "contradiction": false, "solver_ms": 50.2}, {"key": "carve-out", "policy": "apple-109", "rules_in_policy": 313, "sections": [{"id": 5, "text": "2. How we use information we receive about you\nThe table below outlines the purposes for which we process your personal data, the specific categories of data involved, and the legal bases we rely on for each processing activity."}, {"id": 9, "text": "4. Children’s data\nCompany B never knowingly or willingly collects any personal data concerning children under 13 years of age. If you are under 13, please do not use Company B."}], "allow": {"id": "apple-109#s5.0.0", "section": 5, "polarity": "ALLOW", "quotes": [{"field": "polarity", "text": "process"}, {"field": "actor", "text": "we"}, {"field": "action", "text": "process"}, {"field": "data", "text": "personal data"}], "verb": "process", "operation": "processing", "head": {"actor": "first party", "action": "process@processing", "data": "personal data", "recipient": "", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": ["data", "information"]}, "actor": {"same_as": "", "narrower_than": []}}, "guard": {"op": "true"}, "guard_text": "true", "translations": [], "residuals": []}, "deny": {"id": "apple-109#s9.0.0", "section": 9, "polarity": "DENY", "quotes": [{"field": "polarity", "text": "never knowingly or willingly collects"}, {"field": "actor", "text": "Company B"}, {"field": "action", "text": "collects"}, {"field": "data", "text": "personal data"}, {"field": "condition", "text": "concerning children under 13 years of age"}], "verb": "collect", "operation": "collection", "head": {"actor": "first party", "action": "collect@collection", "data": "personal data", "recipient": "", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": ["data", "information"]}, "actor": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "cmp", "var": "user.age", "cmp": "<", "value": 13}]}, "guard_text": "user.age < 13", "translations": [{"kind": "condition", "quote": "concerning children under 13 years of age", "formula": "user.age < 13"}], "residuals": []}, "pair_formation": {"same_operation": false, "data_jaccard": 1.0, "data_contained": true, "formed_in_step_4": false}, "smt_query": "(declare-fun user.age () Int)\n(declare-fun retention.days () Int)\n(assert\n (>= user.age 0))\n(assert\n (>= retention.days 0))\n(assert\n true)\n(assert\n (and (< user.age 13)))\n(check-sat)", "outcome": "overlap_candidate", "blocking_residuals": [], "relation": "prohibition inside permission", "contradiction": false, "solver_ms": 40.1}, {"key": "contradiction", "policy": "android-046", "rules_in_policy": 71, "sections": [{"id": 5, "text": "4. COLLECTION AND USE OF CHILDREN'S PERSONAL INFORMATION\nThe Services comply with the Children's Online Privacy Protection Act (\"COPPA\"). Company C does not knowingly collect personal information from children under the age of 13 through the Services. In addition, in the event that a user identifies himself or herself as a child under the age of 13 within the Services or in connection with any Content or Software, Company C will not collect, store or use any personal information of such user. Further, in the event that Company C receives personal information that Company C discovers was provided by a child under the age of 13, Company C will promptly delete such personal information in a secure manner."}], "allow": {"id": "android-046#s5.4.0", "section": 5, "polarity": "ALLOW", "quotes": [{"field": "polarity", "text": "receives"}, {"field": "actor", "text": "Company C"}, {"field": "action", "text": "receives"}, {"field": "data", "text": "personal information"}, {"field": "condition", "text": "Company C discovers was provided by a child under the age of 13"}], "verb": "receive", "operation": "collection", "head": {"actor": "first party", "action": "receive@collection", "data": "personal data", "recipient": "", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": []}, "actor": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "and", "args": [{"op": "bool", "var": "event.discover_provided_by_child"}, {"op": "cmp", "var": "user.age", "cmp": "<", "value": 13}]}]}, "guard_text": "event.discover_provided_by_child ∧ user.age < 13", "translations": [{"kind": "condition", "quote": "Company C discovers was provided by a child under the age of 13", "formula": "event.discover_provided_by_child ∧ user.age < 13"}], "residuals": []}, "deny": {"id": "android-046#s5.0.0", "section": 5, "polarity": "DENY", "quotes": [{"field": "polarity", "text": "does not"}, {"field": "actor", "text": "Company C"}, {"field": "action", "text": "knowingly collect"}, {"field": "data", "text": "personal information"}, {"field": "condition", "text": "from children under the age of 13"}, {"field": "condition", "text": "through the Services"}], "verb": "collect", "operation": "collection", "head": {"actor": "first party", "action": "collect@collection", "data": "personal data", "recipient": "", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": []}, "actor": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "cmp", "var": "user.age", "cmp": "<", "value": 13}]}, "guard_text": "user.age < 13", "translations": [], "residuals": []}, "pair_formation": {"same_operation": true, "data_jaccard": 1.0, "data_contained": true, "formed_in_step_4": true}, "smt_query": "(declare-fun user.age () Int)\n(declare-fun retention.days () Int)\n(declare-fun event.discover_provided_by_child () Bool)\n(assert\n (>= user.age 0))\n(assert\n (>= retention.days 0))\n(assert\n (and (and event.discover_provided_by_child (< user.age 13))))\n(assert\n (let (($x20 (< user.age 13)))\n(and $x20)))\n(check-sat)", "outcome": "overlap_candidate", "blocking_residuals": [], "relation": "permission inside prohibition", "contradiction": true, "solver_ms": 24.0}, {"key": "unresolved", "policy": "apple-062", "rules_in_policy": 258, "sections": [{"id": 11, "text": "7. CHILDREN’S PRIVACY\nOur Service does not address anyone under the age of 16 (“Children”). When we collect personal information, we do not know the age of our players. We do not knowingly collect personally identifiable information from children under 16. If you are a parent or guardian and you are aware that your Children have provided us with Personal Information, please contact us. If we become aware that we have collected Personal Information from a child under the age of 16 without verification of parental consent, we will take steps to remove that information from our servers.\nUnder our Terms of Service users of our games must be at least 16 years of age. Although the graphical content of the games may be suitable for younger audiences, there are multiple reasons for responsible developers to apply a minimum age of 16. Some of these reasons are in-app purchases and privacy.\nPlease note: When you download our games from e.g. Google Play or Apple App Store you will find published age recommendations in the Apps description. However, these age or maturity classifications refer only to the content suitability (similar to movie ratings G, PG or PG-13 in the U.S., but related to gameplay, animations, etc.) according to the respective rating body responsible for such ratings. As these ratings are done independently by a third party without our contribution, they are not necessarily in line with our Terms of Service.\nFor more info on how these categories are defined, visit these support websites for Apple and Google."}], "allow": {"id": "apple-062#s11.3.0", "section": 11, "polarity": "ALLOW", "quotes": [{"field": "polarity", "text": "have collected"}, {"field": "actor", "text": "we"}, {"field": "action", "text": "collected"}, {"field": "data", "text": "Personal Information"}, {"field": "source", "text": "from a child under the age of 16"}, {"field": "condition", "text": "If we become aware that we have collected Personal Information from a child under the age of 16 without verification of parental consent"}], "verb": "collect", "operation": "collection", "head": {"actor": "first party", "action": "collect@collection", "data": "personal data", "recipient": "", "source": "user", "purpose": ""}, "terms": {"data": {"same_as": "Personal Data", "narrower_than": ["information about you"]}, "actor": {"same_as": "Company D", "narrower_than": []}, "source": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "and", "args": [{"op": "residual", "id": "r45f25658f8a9", "text": "If we become aware that we have collected Personal Information"}, {"op": "cmp", "var": "user.age", "cmp": "<", "value": 16}, {"op": "not", "arg": {"op": "bool", "var": "user.parental_consent"}}]}]}, "guard_text": "residual(\"If we become aware that we have collected Personal Information\") ∧ user.age < 16 ∧ ¬user.parental_consent", "translations": [{"kind": "condition", "quote": "If we become aware that we have collected Personal Information from a child under the age of 16 without verification of parental consent", "formula": "residual(\"If we become aware that we have collected Personal Information\") ∧ user.age < 16 ∧ ¬user.parental_consent"}], "residuals": ["If we become aware that we have collected Personal Information"]}, "deny": {"id": "apple-062#s11.1.0", "section": 11, "polarity": "DENY", "quotes": [{"field": "polarity", "text": "do not knowingly collect"}, {"field": "actor", "text": "We"}, {"field": "action", "text": "collect"}, {"field": "data", "text": "personally identifiable information"}, {"field": "source", "text": "from children under 16"}, {"field": "condition", "text": "from children under 16"}], "verb": "collect", "operation": "collection", "head": {"actor": "first party", "action": "collect@collection", "data": "personally identifiable information", "recipient": "", "source": "user", "purpose": ""}, "terms": {"data": {"same_as": "Personal Data", "narrower_than": ["information about you"]}, "actor": {"same_as": "Company D", "narrower_than": []}, "source": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "cmp", "var": "user.age", "cmp": "<", "value": 16}]}, "guard_text": "user.age < 16", "translations": [{"kind": "condition", "quote": "from children under 16", "formula": "user.age < 16"}], "residuals": []}, "pair_formation": {"same_operation": true, "data_jaccard": 0.0, "data_contained": false, "formed_in_step_4": false}, "smt_query": "(declare-fun user.age () Int)\n(declare-fun retention.days () Int)\n(declare-fun user.parental_consent () Bool)\n(declare-fun |residual:r45f25658f8a9| () Bool)\n(assert\n (>= user.age 0))\n(assert\n (>= retention.days 0))\n(assert\n (let (($x41 (not user.parental_consent)))\n (let (($x17 (< user.age 16)))\n (and (and |residual:r45f25658f8a9| $x17 $x41)))))\n(assert\n (let (($x17 (< user.age 16)))\n(and $x17)))\n(check-sat)", "outcome": "unresolved", "blocking_residuals": ["If we become aware that we have collected Personal Information"], "relation": "permission inside prohibition", "contradiction": true, "solver_ms": 13.6}, {"key": "policy-exception", "policy": "apple-060", "rules_in_policy": 343, "sections": [{"id": 8, "text": "5. Third party data processing\nWe will not share your personal data with third parties except as specified within this Privacy Policy.\nPromoting our Services\nWe do not share your health data with third parties for marketing purposes. With your consent, Company E may collect and share information with AppsFlyer and its partners, Firebase and TikTok Ad Manager. These are mobile app marketing and analytics platforms (not social media platforms) who help us improve our advertising campaigns, understand the performance of our campaigns and spread the word about Company E. They may also use information collected to remind you to revisit the App if you haven’t used it in a while.\nYour health data is not shared with AppsFlyer, Firebase or TikTok Ad Manager. AppsFlyer, Firebase and Tiktok Ad Manager handle your personal data only with your consent and according to our instructions as a data processor.\nHere is how we work with AppsFlyer and its partners for marketing and promotional purposes:"}, {"id": 12, "text": "2. Company E sends your personal data to Firebase, which analyses it and provides us reports and insights on how to optimise our promotional campaigns."}], "allow": {"id": "apple-060#s12.0.0", "section": 12, "polarity": "ALLOW", "quotes": [{"field": "polarity", "text": "sends"}, {"field": "actor", "text": "Company E"}, {"field": "action", "text": "sends"}, {"field": "data", "text": "your personal data"}, {"field": "recipient", "text": "Firebase"}, {"field": "purpose", "text": "analyses it and provides us reports and insights on how to optimise our promotional campaigns"}], "verb": "send", "operation": "disclosure by transmission", "head": {"actor": "first party", "action": "send@disclosure by transmission", "data": "personal data", "recipient": "Firebase", "source": "", "purpose": "advertising"}, "terms": {"data": {"same_as": "", "narrower_than": []}, "actor": {"same_as": "Company E", "narrower_than": []}, "recipient": {"same_as": "", "narrower_than": ["service provider", "third party"]}, "purpose": {"same_as": "", "narrower_than": ["advertising or marketing"]}}, "guard": {"op": "true"}, "guard_text": "true", "translations": [], "residuals": []}, "deny": {"id": "apple-060#s8.0.0", "section": 8, "polarity": "DENY", "quotes": [{"field": "polarity", "text": "will not share"}, {"field": "actor", "text": "We"}, {"field": "action", "text": "share"}, {"field": "data", "text": "your personal data"}, {"field": "recipient", "text": "third parties"}, {"field": "exception", "text": "as specified within this Privacy Policy"}], "verb": "share", "operation": "disclosure", "head": {"actor": "first party", "action": "share@disclosure", "data": "personal data", "recipient": "third party", "source": "", "purpose": ""}, "terms": {"data": {"same_as": "", "narrower_than": []}, "actor": {"same_as": "Company E", "narrower_than": []}, "recipient": {"same_as": "", "narrower_than": []}}, "guard": {"op": "and", "args": [{"op": "not", "arg": {"op": "bool", "var": "policy.permits"}}]}, "guard_text": "¬policy.permits", "translations": [{"kind": "exception", "quote": "as specified within this Privacy Policy", "formula": "¬policy.permits"}], "residuals": []}, "pair_formation": {"same_operation": false, "data_jaccard": 1.0, "data_contained": true, "formed_in_step_4": false}, "smt_query": "(declare-fun user.age () Int)\n(declare-fun retention.days () Int)\n(declare-fun policy.permits () Bool)\n(assert\n (>= user.age 0))\n(assert\n (>= retention.days 0))\n(assert\n (let (($x88 (not policy.permits)))\n (or $x88 true)))\n(assert\n (or (not true) policy.permits))\n(assert\n true)\n(assert\n (let (($x88 (not policy.permits)))\n(and $x88)))\n(check-sat)", "outcome": "mutually_exclusive", "blocking_residuals": [], "relation": "policy exception", "contradiction": false, "solver_ms": 4.5}]};
+"use strict";
+
+const EXAMPLE_LABELS = {
+  "exclusive": "Mutually exclusive rules",
+  "carve-out": "Overlap: prohibition inside permission",
+  "contradiction": "Overlap: contradiction",
+  "unresolved": "Unresolved: a residual blocks the answer",
+  "policy-exception": "Mutually exclusive: policy exception"
+};
+
+const STEPS = [
+  {title: "Text preparation and candidate extraction", fields: ["polarity", "actor", "action", "data", "recipient", "source", "purpose", "condition", "exception"], render: renderExtraction},
+  {title: "Canonicalization and term hierarchies", fields: ["actor", "action", "data", "recipient", "source", "purpose"], render: renderCanonicalization},
+  {title: "Logical rule representation", fields: ["polarity", "actor", "action", "data", "recipient", "source", "purpose", "condition", "exception"], render: renderRepresentation},
+  {title: "Pair formation", fields: ["action", "data", "actor", "recipient", "source"], render: renderPairFormation},
+  {title: "Guard translation", fields: ["condition", "exception"], render: renderGuardTranslation},
+  {title: "SMT-based consistency analysis", fields: ["polarity", "condition", "exception"], render: renderConsistency}
+];
+
+const FIELD_CLASS = {
+  actor: "h4", action: "h0", data: "h1", recipient: "h3", source: "h3", purpose: "h3",
+  condition: "h2", exception: "h2", polarity: "u1"
+};
+
+const FIELD_NAMES = {
+  polarity: "Polarity", actor: "Actor", action: "Action", data: "Data", recipient: "Recipient",
+  source: "Source", purpose: "Purpose", condition: "Condition", exception: "Exception"
+};
+
+const SLOTS = ["actor", "action", "data", "recipient", "source", "purpose"];
+
+const OUTCOME_WORDS = {
+  overlap_candidate: "Overlap candidate",
+  mutually_exclusive: "Mutually exclusive",
+  unresolved: "Unresolved"
+};
+
+const state = {
+  examples: [],
+  example: null,
+  step: 0
+};
+
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function escapeHtml(text) {
+  const replacements = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"};
+  return String(text).replace(/[&<>"]/g, function (character) {
+    return replacements[character];
+  });
+}
+
+async function loadExamples() {
+  if (window.PRELOAD) {
+    return window.PRELOAD.examples;
+  }
+  const response = await fetch("/api/policyclaw/examples");
+  const loaded = await response.json();
+  return loaded.examples;
+}
+
+function bothRules() {
+  return [state.example.allow, state.example.deny];
+}
+
+/* ---------------- policy text ---------------- */
+
+function quoteSpans(text, sectionId, fields) {
+  const spans = [];
+  for (const rule of bothRules()) {
+    if (rule.section !== sectionId) {
+      continue;
+    }
+    for (const quote of rule.quotes) {
+      if (!fields.includes(quote.field)) {
+        continue;
+      }
+      const start = text.indexOf(quote.text);
+      if (start >= 0) {
+        spans.push({start: start, end: start + quote.text.length, field: quote.field});
+      }
+    }
+  }
+  spans.sort(function (left, right) {
+    return left.start - right.start || right.end - left.end;
+  });
+  return spans;
+}
+
+function markedParagraph(text, offset, spans) {
+  let html = "";
+  let position = offset;
+  const end = offset + text.length;
+  for (const span of spans) {
+    if (span.end <= position || span.start >= end || span.start < position) {
+      continue;
+    }
+    const spanEnd = Math.min(span.end, end);
+    html += escapeHtml(text.slice(position - offset, span.start - offset));
+    html += '<mark class="' + FIELD_CLASS[span.field] + '">' + escapeHtml(text.slice(span.start - offset, spanEnd - offset)) + "</mark>";
+    position = spanEnd;
+  }
+  html += escapeHtml(text.slice(position - offset));
+  return html;
+}
+
+function renderPolicy() {
+  const fields = STEPS[state.step].fields;
+  let html = "";
+  for (const section of state.example.sections) {
+    const spans = quoteSpans(section.text, section.id, fields);
+    html += "<h3>Section " + section.id + "</h3>";
+    let offset = 0;
+    for (const paragraph of section.text.split("\n")) {
+      if (paragraph.trim()) {
+        html += "<p>" + markedParagraph(paragraph, offset, spans) + "</p>";
+      }
+      offset += paragraph.length + 1;
+    }
+  }
+  byId("policy").innerHTML = html;
+
+  byId("legend").innerHTML = fields.map(function (field) {
+    return '<mark class="' + FIELD_CLASS[field] + '">' + FIELD_NAMES[field].toLowerCase() + "</mark>";
+  }).join(" ");
+}
+
+/* ---------------- step outputs ---------------- */
+
+function twoRuleTable(rows) {
+  let html = "<table><tr><th></th><th>Permission</th><th>Prohibition</th></tr>";
+  for (const row of rows) {
+    if (!row.allow && !row.deny) {
+      continue;
+    }
+    html += '<tr><td class="slot">' + escapeHtml(row.name) + "</td><td>" + (row.allow || "") + "</td><td>" + (row.deny || "") + "</td></tr>";
+  }
+  return html + "</table>";
+}
+
+function quotesOf(rule, field) {
+  return rule.quotes.filter(function (quote) {
+    return quote.field === field;
+  }).map(function (quote) {
+    return "“" + escapeHtml(quote.text) + "”";
+  }).join("<br>");
+}
+
+function renderExtraction() {
+  const example = state.example;
+  const rows = Object.keys(FIELD_NAMES).map(function (field) {
+    return {name: FIELD_NAMES[field], allow: quotesOf(example.allow, field), deny: quotesOf(example.deny, field)};
+  });
+  return twoRuleTable(rows) + '<p class="dim">' + example.rules_in_policy + " rules in this policy.</p>";
+}
+
+function termText(rule, slot) {
+  const name = rule.head[slot];
+  if (!name) {
+    return "";
+  }
+  let html = escapeHtml(name);
+  const term = rule.terms[slot];
+  if (term && term.same_as && term.same_as !== name) {
+    html += ' <span class="dim">= ' + escapeHtml(term.same_as) + "</span>";
+  }
+  if (term && term.narrower_than.length) {
+    html += ' <span class="dim">⊂ ' + escapeHtml(term.narrower_than.join(", ")) + "</span>";
+  }
+  return html;
+}
+
+function renderCanonicalization() {
+  const example = state.example;
+  const rows = [{
+    name: "Operation",
+    allow: escapeHtml(example.allow.verb) + " → " + escapeHtml(example.allow.operation),
+    deny: escapeHtml(example.deny.verb) + " → " + escapeHtml(example.deny.operation)
+  }];
+  for (const slot of ["data", "actor", "recipient", "source", "purpose"]) {
+    rows.push({name: FIELD_NAMES[slot], allow: termText(example.allow, slot), deny: termText(example.deny, slot)});
+  }
+  return twoRuleTable(rows);
+}
+
+function renderRepresentation() {
+  const example = state.example;
+  const rows = [{name: "Polarity", allow: "ALLOW", deny: "DENY"}];
+  for (const slot of SLOTS) {
+    rows.push({name: "Head: " + slot, allow: escapeHtml(example.allow.head[slot]), deny: escapeHtml(example.deny.head[slot])});
+  }
+  rows.push({
+    name: "Guard",
+    allow: '<span class="src">' + escapeHtml(example.allow.guard_text) + "</span>",
+    deny: '<span class="src">' + escapeHtml(example.deny.guard_text) + "</span>"
+  });
+  return twoRuleTable(rows);
+}
+
+function yesNo(value) {
+  return value ? "yes" : "no";
+}
+
+function renderPairFormation() {
+  const example = state.example;
+  const formation = example.pair_formation;
+  let html = "<table>"
+    + '<tr><td class="slot">Operation</td><td>' + escapeHtml(example.allow.operation) + " / " + escapeHtml(example.deny.operation)
+    + "</td><td>same: " + yesNo(formation.same_operation) + "</td></tr>"
+    + '<tr><td class="slot">Data names</td><td>' + escapeHtml(example.allow.head.data) + " / " + escapeHtml(example.deny.head.data)
+    + "</td><td>Jaccard " + formation.data_jaccard + (formation.data_contained ? ", contained" : "") + "</td></tr>"
+    + '<tr><td class="slot">Opposing pair</td><td colspan="2">';
+  if (formation.formed_in_step_4) {
+    html += "formed by name similarity";
+  } else {
+    html += "not formed by name similarity; compared in Step 6 through the term hierarchies";
+  }
+  return html + "</td></tr></table>";
+}
+
+function translationRows(rule, label) {
+  let html = "";
+  if (rule.translations.length) {
+    for (const translation of rule.translations) {
+      html += "<tr><td>" + label + "</td><td>" + escapeHtml(translation.kind) + "</td><td>“" + escapeHtml(translation.quote)
+        + '”</td><td class="src">' + escapeHtml(translation.formula) + "</td></tr>";
+    }
+    return html;
+  }
+  const quotes = [quotesOf(rule, "condition"), quotesOf(rule, "exception")].filter(Boolean).join("<br>");
+  return "<tr><td>" + label + "</td><td></td><td>" + (quotes || '<span class="dim">none</span>') + '</td><td class="src">'
+    + escapeHtml(rule.guard_text) + "</td></tr>";
+}
+
+function renderGuardTranslation() {
+  const example = state.example;
+  let html = "<table><tr><th>Rule</th><th></th><th>Quote</th><th>Guard</th></tr>"
+    + translationRows(example.allow, "Permission") + translationRows(example.deny, "Prohibition") + "</table>";
+  const residuals = example.allow.residuals.concat(example.deny.residuals);
+  if (residuals.length) {
+    html += "<p>Residuals: " + residuals.map(function (residual) {
+      return "“" + escapeHtml(residual) + "”";
+    }).join(", ") + "</p>";
+  }
+  return html;
+}
+
+function renderConsistency() {
+  const example = state.example;
+  let html = "<table>"
+    + '<tr><td class="slot">φ<sup>+</sup></td><td class="src">' + escapeHtml(example.allow.guard_text) + "</td></tr>"
+    + '<tr><td class="slot">φ<sup>−</sup></td><td class="src">' + escapeHtml(example.deny.guard_text) + "</td></tr>"
+    + '<tr><td class="slot">φ<sup>+</sup> ∧ φ<sup>−</sup></td><td class="outcome">' + escapeHtml(OUTCOME_WORDS[example.outcome] || example.outcome)
+    + ' <span class="dim">Z3, ' + example.solver_ms + " ms</span></td></tr>";
+  if (example.blocking_residuals.length) {
+    html += '<tr><td class="slot">Blocking residual</td><td>' + example.blocking_residuals.map(function (residual) {
+      return "“" + escapeHtml(residual) + "”";
+    }).join(", ") + "</td></tr>";
+  }
+  html += '<tr><td class="slot">Scope</td><td>' + escapeHtml(example.relation) + "</td></tr>"
+    + '<tr><td class="slot">Contradiction</td><td class="' + (example.contradiction ? "bad" : "") + '">' + yesNo(example.contradiction) + "</td></tr>"
+    + "</table>"
+    + '<details><summary>SMT-LIB query</summary><pre class="src">' + escapeHtml(example.smt_query) + "</pre></details>";
+  return html;
+}
+
+/* ---------------- navigation ---------------- */
+
+function renderSteps() {
+  byId("steps").innerHTML = STEPS.map(function (step, index) {
+    const selected = index === state.step ? ' class="on"' : "";
+    return "<li" + selected + ' data-step="' + index + '"><span class="num">' + (index + 1) + "</span>" + escapeHtml(step.title) + "</li>";
+  }).join("");
+  for (const item of byId("steps").querySelectorAll("li")) {
+    item.addEventListener("click", function () {
+      showStep(Number(item.dataset.step));
+    });
+  }
+}
+
+function showStep(index) {
+  if (index < 0 || index >= STEPS.length) {
+    return;
+  }
+  state.step = index;
+  renderSteps();
+  renderPolicy();
+  byId("output").innerHTML = STEPS[index].render();
+}
+
+function showExample(index) {
+  state.example = state.examples[index];
+  showStep(0);
+}
+
+async function start() {
+  state.examples = await loadExamples();
+  byId("example").innerHTML = state.examples.map(function (example, index) {
+    return '<option value="' + index + '">' + escapeHtml(EXAMPLE_LABELS[example.key] || example.key) + "</option>";
+  }).join("");
+  byId("example").addEventListener("change", function () {
+    showExample(Number(byId("example").value));
+    byId("example").blur();
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      showStep(state.step + 1);
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      showStep(state.step - 1);
+    }
+  });
+  showExample(0);
+}
+
+start();
+</script>
+</main><footer class="site-footer"><div class="inner"><div class="foot-nav"><a href="index.html">All demos</a> · <a href="policyclaw.html">PolicyClaw</a> · <a href="privacy-as-code.html">Privacy as Code</a> · <a href="poliscope.html">PoliScope</a></div><p>Yunwei Zhao · New York University — PolicyClaw · Privacy as Code · PoliScope. This saved copy shows precomputed results; to edit the inputs and re-run the engines, run <code>python3 server.py</code> locally.</p></div></footer></body>
+</html>
