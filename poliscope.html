@@ -5,14 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PoliScope demo</title>
 <style>/* ============================================================
-   Privacy Demos — shared theme
-   PolicyClaw · Privacy as Code · PoliScope
+   Shared theme for the three method pages
+   (PolicyClaw · Privacy as Code · PoliScope)
    ============================================================ */
 
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #f1f3f6;
   --text: #0f172a;
   --dim: #5b6472;
   --faint: #8a93a3;
@@ -20,141 +17,25 @@
   --line-strong: #c9d0dc;
   --accent: #4f46e5;
   --accent-ink: #4338ca;
-  --accent-soft: #eef0fe;
   --good: #15803d;
-  --good-bg: #eaf7ee;
   --bad: #b91c1c;
-  --bad-bg: #fdeceb;
   --warn: #92400e;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px -18px rgba(15, 23, 42, .25);
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
-
 body {
-  margin: 0;
-  background: var(--bg);
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 24px 28px 96px;
+  background: #fff;
   color: var(--text);
   font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* ---------- layout shell ---------- */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 12px 28px;
-  background: rgba(255, 255, 255, .9);
-  backdrop-filter: saturate(160%) blur(8px);
-  border-bottom: 1px solid var(--line);
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-weight: 700;
-  letter-spacing: -.01em;
-  color: var(--text);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.brand-mark {
-  display: inline-grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: #fff;
-  font-size: 15px;
-  box-shadow: var(--shadow);
-}
-.brand .author { font-weight: 500; color: var(--dim); font-size: .86rem; }
-.site-nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
-.site-nav a {
-  padding: 6px 13px;
-  border-radius: 999px;
-  color: var(--dim);
-  text-decoration: none;
-  font-size: .9rem;
-  font-weight: 500;
-  border: 1px solid transparent;
-}
-.site-nav a:hover { color: var(--text); background: var(--surface-2); }
-.site-nav a.active { color: var(--accent-ink); background: var(--accent-soft); border-color: #dcdbfc; }
-
-main, .page {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 28px 24px 72px;
-}
-
-/* ---------- hero / landing ---------- */
-.hero { max-width: 860px; margin: 8px 0 10px; }
-.hero .eyebrow {
-  display: inline-block;
-  margin: 0 0 14px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-  font-size: .8rem;
-  font-weight: 600;
-  letter-spacing: .02em;
-}
-.hero h1 {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 3.1rem);
-  line-height: 1.08;
-  letter-spacing: -.03em;
-  font-weight: 800;
-}
-.hero .sub {
-  margin: 16px 0 0;
-  font-size: 1.16rem;
-  color: var(--dim);
-  max-width: 46em;
-}
-
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 30px; }
-@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  text-decoration: none;
-  color: inherit;
-  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
-}
-.card:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: 0 14px 34px -20px rgba(15, 23, 42, .35); }
-.card .icon { font-size: 1.7rem; line-height: 1; }
-.card h2 { margin: 0; font-size: 1.22rem; letter-spacing: -.01em; }
-.card .q { font-size: .94rem; color: var(--dim); margin: 0; }
-.card .cta { margin-top: auto; color: var(--accent-ink); font-weight: 600; font-size: .94rem; }
-.card .cta::after { content: " →"; }
-
-.walkthrough { max-width: 52em; padding-left: 1.2em; color: #26303f; }
-.walkthrough li { margin: 10px 0; }
-.walkthrough code, .walkthrough em { font-style: normal; font-weight: 600; }
-
-/* ---------- headings / text ---------- */
 h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 4px; }
 h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margin: 30px 0 8px; }
 h3 { font-size: 1rem; font-weight: 600; margin: 20px 0 6px; }
@@ -170,15 +51,15 @@ table {
   width: 100%;
   font-size: .92rem;
   margin: 8px 0 6px;
-  background: var(--surface);
+  background: #fff;
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   overflow: hidden;
 }
 th {
   text-align: left;
   font-weight: 600;
-  background: var(--surface-2);
+  background: #f6f7f9;
   color: #334155;
   padding: 9px 14px;
   border-bottom: 1px solid var(--line);
@@ -205,9 +86,9 @@ select, button, input { font: inherit; color: inherit; }
 select, input[type="text"], input:not([type]) {
   max-width: 100%;
   padding: 6px 10px;
-  background: var(--surface);
+  background: #fff;
   border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
 }
 select:focus, input:focus, textarea:focus { outline: 2px solid #c7c9f8; outline-offset: 1px; border-color: var(--accent); }
 textarea {
@@ -215,17 +96,17 @@ textarea {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   padding: 10px 12px;
   line-height: 1.55;
   color: var(--text);
-  background: var(--surface);
+  background: #fff;
   resize: vertical;
 }
-textarea[readonly] { background: var(--surface-2); }
+textarea[readonly] { background: #f6f7f9; }
 button {
   padding: 6px 20px;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   border: 1px solid var(--accent);
   background: var(--accent);
   color: #fff;
@@ -242,23 +123,23 @@ pre.src {
   padding: 12px 14px;
   background: #0f172a;
   color: #e2e8f0;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   overflow-wrap: anywhere;
   overflow-x: auto;
 }
 .policytext {
   white-space: pre-wrap;
   border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   padding: 12px 14px;
   max-height: 300px;
   overflow-y: auto;
   font-size: .95rem;
-  background: var(--surface);
+  background: #fff;
 }
 .diff { white-space: pre; overflow-x: auto; }
-.diff .add { background: var(--good-bg); display: block; }
-.diff .del { background: var(--bad-bg); display: block; }
+.diff .add { background: #eaf7ee; display: block; }
+.diff .del { background: #fdeceb; display: block; }
 
 /* ---------- highlight marks ---------- */
 mark { color: inherit; padding: 0 2px; border-radius: 3px; }
@@ -296,22 +177,17 @@ summary.h2 { font-size: 1.14rem; font-weight: 700; letter-spacing: -.01em; margi
 .sent.sel { border-left-color: var(--accent); }
 .plain { font-size: .92rem; color: #334155; margin: 2px 0 4px; }
 
-/* ---------- PolicyClaw specifics (shared, kept for safety) ---------- */
+/* ---------- PolicyClaw specifics ---------- */
 .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 40px; align-items: start; margin-top: 18px; }
 @media (max-width: 920px) { .cols { grid-template-columns: minmax(0, 1fr); } }
-
-/* ---------- footer ---------- */
-.site-footer {
-  border-top: 1px solid var(--line);
-  margin-top: 56px;
-  padding: 22px 24px 40px;
-  color: var(--dim);
-  font-size: .86rem;
-  background: var(--surface);
-}
-.site-footer .inner { max-width: 1180px; margin: 0 auto; }
-.site-footer a { color: var(--accent-ink); }
-.site-footer .foot-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 6px 0; }
+#steps { list-style: none; margin: 0 0 14px; padding: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+#steps li { padding: 7px 10px; cursor: pointer; border-top: 1px solid var(--line); }
+#steps li:first-child { border-top: 0; }
+#steps li:hover { background: #f4f6fa; }
+#steps li.on { background: #eef0fe; font-weight: 600; }
+#steps .num { display: inline-block; width: 1.6em; }
+#policy p { margin: 0 0 12px; }
+#policy h3 { margin-top: 0; }
 
 [hidden] { display: none !important; }
 hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0 0; }
@@ -319,7 +195,6 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0 0; }
 </style>
 </head>
 <body>
-<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">◈</span>Privacy Demos<span class="author"> · Yunwei Zhao, NYU</span></a><nav class="site-nav"><a href="index.html">All demos</a><a href="policyclaw.html">PolicyClaw</a><a href="privacy-as-code.html">Privacy as Code</a><a href="poliscope.html" class="active">PoliScope</a></nav></header><main class="page">
 
 <h1>PoliScope</h1>
 <p class="lead">Policy statement and code base to policy violations in the code.</p>
@@ -494,5 +369,5 @@ async function start() {
 
 start();
 </script>
-</main><footer class="site-footer"><div class="inner"><div class="foot-nav"><a href="index.html">All demos</a> · <a href="policyclaw.html">PolicyClaw</a> · <a href="privacy-as-code.html">Privacy as Code</a> · <a href="poliscope.html">PoliScope</a></div><p>Yunwei Zhao · New York University — PolicyClaw · Privacy as Code · PoliScope. This saved copy shows precomputed results; to edit the inputs and re-run the engines, run <code>python3 server.py</code> locally.</p></div></footer></body>
+</body>
 </html>
