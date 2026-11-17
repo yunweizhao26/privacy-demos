@@ -1,12 +1,8 @@
-# Privacy Demos
+# Privacy demos
 
-Self-contained, interactive demos for three privacy research tools:
+PolicyClaw, Privacy as Code and PoliScope on one page, one tab each.
+Policy text on the left, the code or output produced from it on the right.
 
-- **PolicyClaw** — does a privacy policy contradict itself?
-- **Privacy as Code** — does a service keep its promises over time?
-- **PoliScope** — does the code keep the promises?
+Live page: https://yunweizhao26.github.io/privacy-demos/
 
-**Live:** https://yunweizhao26.github.io/privacy-demos/
-
-Every result is precomputed, so the pages run in any browser with no server and no install.
-The generator source lives in the research repos (`PolicyClaw`, `privacy_as_code`, `privacy-enforcement`).
+This repository holds only the built page. All data on it was computed in advance.

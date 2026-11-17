@@ -1,58 +1,13 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PolicyClaw · Privacy as Code · PoliScope</title>
-<style>
-  html, body { height: 100%; margin: 0; }
-  body {
-    display: flex;
-    flex-direction: column;
-    background: #fff;
-    color: #0f172a;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  .tabs {
-    flex: 0 0 auto;
-    display: flex;
-    gap: 6px;
-    padding: 10px 14px;
-    border-bottom: 1px solid #e3e7ee;
-    background: #fafafa;
-  }
-  .tab {
-    border: none;
-    background: transparent;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: .95rem;
-    font-weight: 600;
-    color: #5b6472;
-    cursor: pointer;
-  }
-  .tab:hover { background: #eef0fe; color: #4338ca; }
-  .tab.active { background: #4f46e5; color: #fff; }
-  iframe { flex: 1 1 auto; width: 100%; border: 0; }
-</style>
-</head>
-<body>
-  <nav class="tabs" aria-label="demos">
-    <button class="tab active" data-src="policyclaw.html">PolicyClaw</button>
-    <button class="tab" data-src="privacy-as-code.html">Privacy as Code</button>
-    <button class="tab" data-src="poliscope.html">PoliScope</button>
-  </nav>
-  <iframe id="frame" src="policyclaw.html" title="demo"></iframe>
-  <script>
-    const tabs = Array.from(document.querySelectorAll('.tab'));
-    const frame = document.getElementById('frame');
-    for (const tab of tabs) {
-      tab.addEventListener('click', function () {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        frame.src = tab.dataset.src;
-      });
-    }
-  </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PolicyClaw · Privacy as Code · PoliScope</title>
+    <script type="module" crossorigin src="./assets/index-Clw4TyEJ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DoJk0TEk.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
